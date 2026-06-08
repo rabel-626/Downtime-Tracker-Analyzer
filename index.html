@@ -135,6 +135,12 @@
     button:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.2); }
     input[type="file"] { display: none; }
 
+    .drop-zone-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
     .drop-zone {
       border: 2px dashed rgba(255,255,255,0.32);
       border-radius: 22px;
@@ -142,8 +148,16 @@
       background: rgba(255,255,255,0.035);
       text-align: center;
       transition: border-color 0.16s ease, background 0.16s ease, transform 0.12s ease;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .drop-zone.drag-over { border-color: var(--mpg-teal); background: rgba(18,163,154,0.12); transform: scale(1.004); }
+    .folder-drop-zone.drag-over { border-color: var(--mpg-yellow); background: rgba(248,197,28,0.12); }
+    .drop-zone-grid-note { grid-column: 1 / -1; }
+    @media (max-width: 860px) { .drop-zone-grid { grid-template-columns: 1fr; } }
     .drop-title { font-size: 24px; font-weight: 950; letter-spacing: -0.02em; margin-bottom: 8px; }
     .drop-note { color: #d4d4d8; line-height: 1.45; margin-bottom: 16px; }
     .drop-warning { color: #fed7aa; font-size: 13px; margin-top: 12px; font-weight: 750; }
@@ -557,6 +571,31 @@
     .print-study-list .left { text-align: left !important; }
     .print-study-muted { color: var(--muted); font-size: 10px; font-weight: 750; text-align: center; padding: 6px 8px; border-top: 1px solid rgba(255,255,255,0.10); }
 
+    .print-report-header {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(216,47,139,0.16), rgba(18,163,154,0.10), rgba(0,118,182,0.12));
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .print-report-title {
+      margin: 0;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .print-report-meta {
+      margin-top: 5px;
+      color: #d4d4d8;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .print-pdf-mode #paretoTableWrap { display: block !important; }
+
 
 
     .calc-note {
@@ -591,29 +630,34 @@
     @page { size: landscape; margin: 0.35in; }
 
     @media print {
-      body { background: #050505 !important; color: #f4f4f5 !important; }
-      .no-print, .hero, #loadSection, #studySection { display: none !important; }
+      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      html, body { background: #050505 !important; color: #f4f4f5 !important; }
+      .no-print, .hero, #loadSection, #studySection, #calculationSection, #studySlicerPanel, #tagFilterPanel, #tagGroupPanel { display: none !important; }
       .print-only { display: block !important; }
       .page-wrap { width: 100% !important; max-width: none !important; padding: 0 !important; }
-      .box { box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; margin: 0 !important; }
+      #paretoSection { display: block !important; }
+      .box { box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; margin: 0 !important; border-color: rgba(255,255,255,0.28) !important; }
       .box-header .button-row { display: none !important; }
-      .summary-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
-      #paretoSvg { min-width: 0 !important; height: 310px !important; }
+      .summary-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 7px !important; }
+      #paretoSvg { width: 100% !important; min-width: 0 !important; height: 340px !important; display: block !important; }
+      #paretoTableWrap, #paretoTableWrap.table-collapsed { display: block !important; margin-top: 10px !important; }
+      #paretoTable { break-inside: auto; page-break-inside: auto; }
       table { min-width: 0 !important; table-layout: auto !important; }
       th, td { font-size: 8px !important; padding: 3px 4px !important; white-space: normal !important; word-break: break-word !important; }
-      .metric { min-height: 54px !important; padding: 7px !important; }
+      th { background: rgba(255,255,255,0.16) !important; color: #ffffff !important; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      .metric { min-height: 54px !important; padding: 7px !important; background: rgba(255,255,255,0.07) !important; }
       .metric-label { font-size: 8px !important; margin-bottom: 4px !important; }
       .metric-value { font-size: 15px !important; }
       .box-header { margin-bottom: 8px !important; }
       .box h2 { font-size: 14px !important; }
       .box-subtitle { font-size: 9px !important; margin-top: 2px !important; }
-      .chart-wrap { margin-top: 8px !important; padding: 6px !important; }
+      .chart-wrap { margin-top: 8px !important; padding: 6px !important; overflow: visible !important; border-color: rgba(255,255,255,0.20) !important; }
       .print-study-list { margin-top: 8px !important; break-inside: avoid; page-break-inside: avoid; }
       .print-study-title { font-size: 9px !important; padding: 5px 6px !important; }
       .print-study-muted { font-size: 8px !important; padding: 4px 5px !important; }
       .detail-row, .expand-cell { display: none !important; }
       .table-scroll { overflow: visible !important; }
-      .chart-wrap { overflow: visible !important; }
     }
   </style>
 </head>
@@ -645,14 +689,20 @@
           <button id="clearBtn" class="danger" type="button">Clear Loaded Data</button>
         </div>
       </div>
-      <div id="dropZone" class="drop-zone">
-        <div class="drop-title">Drop JSON files or a folder here</div>
-        <div class="drop-note">Drop individual JSON studies, multiple JSON studies, or one parent folder. The app will scan selected folders and load every valid .json study it can access.</div>
-        <label for="jsonInputSecondary" class="file-button primary">Browse for JSON Files</label>
-        <input id="jsonInputSecondary" type="file" accept=".json,application/json" multiple />
-        <label for="folderInputSecondary" class="file-button export" style="margin-left: 8px;">Browse for Study Folder</label>
-        <input id="folderInputSecondary" type="file" accept=".json,application/json" webkitdirectory directory multiple />
-        <div class="drop-warning">Accepted input: .json files only. Existing loaded files stay active until cleared. Folder loading works best in Chrome and Edge.</div>
+      <div id="dropZone" class="drop-zone-grid">
+        <div id="jsonDropZone" class="drop-zone">
+          <div class="drop-title">Drop JSON files here</div>
+          <div class="drop-note">Use this area for one or more saved downtime-study .json files.</div>
+          <label for="jsonInputSecondary" class="file-button primary">Browse for JSON Files</label>
+          <input id="jsonInputSecondary" type="file" accept=".json,application/json" multiple />
+        </div>
+        <div id="folderDropZone" class="drop-zone folder-drop-zone">
+          <div class="drop-title">Drop a study folder here</div>
+          <div class="drop-note">Use this area for a parent folder. The app will scan subfolders and load every readable .json study file.</div>
+          <label for="folderInputSecondary" class="file-button export">Browse for Study Folder</label>
+          <input id="folderInputSecondary" type="file" accept=".json,application/json" webkitdirectory directory multiple />
+        </div>
+        <div class="drop-warning drop-zone-grid-note">Accepted input: .json files only. Existing loaded files stay active until cleared. Folder drag-and-drop works best in Chrome or Edge. If your browser blocks folder drops, use Browse for Study Folder.</div>
       </div>
       <div id="loadStatus" class="status">No JSON studies loaded yet.</div>
     </section>
@@ -665,8 +715,12 @@
         </div>
         <div class="button-row no-print">
           <button id="exportExcelBtn" class="export" type="button" disabled>Export Excel</button>
-          <button id="printParetoBtn" class="copy" type="button" disabled>Print Pareto PDF</button>
         </div>
+      </div>
+
+      <div id="paretoPrintHeader" class="print-only print-report-header">
+        <p class="print-report-title">Downtime Pareto PDF Report</p>
+        <div id="paretoPrintMeta" class="print-report-meta">Load studies to generate report details.</div>
       </div>
 
       <div class="summary-grid">
@@ -769,7 +823,10 @@
 
       <div class="table-toggle-row no-print">
         <div class="table-toggle-title">Pareto Table <span id="paretoTableSummary" class="table-toggle-note">Collapsed by default</span></div>
-        <button id="toggleParetoTableBtn" class="table-toggle-btn" type="button" data-table-toggle="paretoTableWrap">Expand Table</button>
+        <div class="button-row">
+          <button id="printParetoBtn" class="copy" type="button" disabled>Print Pareto PDF</button>
+          <button id="toggleParetoTableBtn" class="table-toggle-btn" type="button" data-table-toggle="paretoTableWrap">Expand Table</button>
+        </div>
       </div>
       <div id="paretoTableWrap" class="table-scroll table-collapsed" style="margin-top: 16px;">
         <table id="paretoTable">
@@ -905,6 +962,9 @@
 
     const els = {
       dropZone: document.getElementById('dropZone'),
+      jsonDropZone: document.getElementById('jsonDropZone'),
+      folderDropZone: document.getElementById('folderDropZone'),
+      loadSection: document.getElementById('loadSection'),
       jsonInput: document.getElementById('jsonInput'),
       jsonInputSecondary: document.getElementById('jsonInputSecondary'),
       folderInput: document.getElementById('folderInput'),
@@ -955,7 +1015,8 @@
       studyBody: document.getElementById('studyBody'),
       calculationBody: document.getElementById('calculationBody'),
       printStudyBody: document.getElementById('printStudyBody'),
-      printStudyNote: document.getElementById('printStudyNote')
+      printStudyNote: document.getElementById('printStudyNote'),
+      paretoPrintMeta: document.getElementById('paretoPrintMeta')
     };
 
     const svgNS = 'http://www.w3.org/2000/svg';
@@ -1099,7 +1160,7 @@
     }
 
     function readAllDirectoryEntries(directoryReader) {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const entries = [];
         function readBatch() {
           directoryReader.readEntries(batch => {
@@ -1109,53 +1170,115 @@
             }
             entries.push(...batch);
             readBatch();
-          }, reject);
+          }, err => {
+            console.warn('Unable to read a dropped folder entry.', err);
+            resolve(entries);
+          });
         }
         readBatch();
       });
     }
 
     function entryToFile(entry) {
-      return new Promise((resolve, reject) => entry.file(resolve, reject));
+      return new Promise(resolve => {
+        entry.file(resolve, err => {
+          console.warn('Unable to read a dropped file entry.', entry?.name || entry?.fullPath || '', err);
+          resolve(null);
+        });
+      });
+    }
+
+    async function collectFilesFromFileSystemHandle(handle) {
+      if (!handle) return [];
+      try {
+        if (handle.kind === 'file') {
+          const file = await handle.getFile();
+          return file ? [file] : [];
+        }
+        if (handle.kind === 'directory') {
+          const collected = [];
+          for await (const childHandle of handle.values()) {
+            collected.push(...await collectFilesFromFileSystemHandle(childHandle));
+          }
+          return collected;
+        }
+      } catch (err) {
+        console.warn('Unable to read a dropped file-system handle.', handle?.name || '', err);
+      }
+      return [];
     }
 
     async function collectFilesFromEntry(entry) {
       if (!entry) return [];
       if (entry.isFile) {
         const file = await entryToFile(entry);
-        return [file];
+        return file ? [file] : [];
       }
       if (entry.isDirectory) {
         const reader = entry.createReader();
         const entries = await readAllDirectoryEntries(reader);
-        const nested = await Promise.all(entries.map(collectFilesFromEntry));
-        return nested.flat();
+        const collected = [];
+        for (const childEntry of entries) {
+          collected.push(...await collectFilesFromEntry(childEntry));
+        }
+        return collected;
       }
       return [];
     }
 
-    async function collectFilesFromDataTransfer(dataTransfer) {
-      const items = Array.from(dataTransfer?.items || []);
-      const supportsDirectoryDrop = items.some(item => typeof item.webkitGetAsEntry === 'function');
-      if (!supportsDirectoryDrop) return Array.from(dataTransfer?.files || []);
+    async function collectFilesFromDataTransfer(dataTransfer, mode = 'ANY') {
+      const directFiles = Array.from(dataTransfer?.files || []);
+      const items = Array.from(dataTransfer?.items || []).filter(item => !item.kind || item.kind === 'file');
+      if (!items.length) return mode === 'FOLDER' ? [] : directFiles;
 
       const collected = [];
       for (const item of items) {
-        const entry = item.webkitGetAsEntry?.();
-        if (!entry) continue;
-        collected.push(...await collectFilesFromEntry(entry));
+        try {
+          if (typeof item.getAsFileSystemHandle === 'function') {
+            const handle = await item.getAsFileSystemHandle();
+            if (handle && (mode !== 'FOLDER' || handle.kind === 'directory')) {
+              collected.push(...await collectFilesFromFileSystemHandle(handle));
+              continue;
+            }
+          }
+
+          if (typeof item.webkitGetAsEntry === 'function') {
+            const entry = item.webkitGetAsEntry();
+            if (entry && (mode !== 'FOLDER' || entry.isDirectory)) {
+              collected.push(...await collectFilesFromEntry(entry));
+              continue;
+            }
+          }
+
+          const file = typeof item.getAsFile === 'function' ? item.getAsFile() : null;
+          if (file && mode !== 'FOLDER') collected.push(file);
+        } catch (err) {
+          console.warn('Unable to inspect a dropped item.', err);
+        }
       }
-      return collected.length ? collected : Array.from(dataTransfer?.files || []);
+
+      if (mode !== 'FOLDER') {
+        directFiles.forEach(file => {
+          const alreadyIncluded = collected.some(existing =>
+            existing.name === file.name && existing.size === file.size && existing.lastModified === file.lastModified
+          );
+          if (!alreadyIncluded) collected.push(file);
+        });
+      }
+
+      return collected;
     }
 
-    async function handleDropTransfer(dataTransfer) {
-      try {
-        const files = await collectFilesFromDataTransfer(dataTransfer);
-        await handleFiles(files);
-      } catch (err) {
-        console.error(err);
-        setStatus('Folder drop could not be read by this browser. Use the Load All JSONs from Folder button instead.', 'warn');
+    async function handleDropTransfer(dataTransfer, mode = 'ANY') {
+      const files = await collectFilesFromDataTransfer(dataTransfer, mode);
+      if (!files.length) {
+        const message = mode === 'FOLDER'
+          ? 'No readable JSON files were found in that folder drop. Folder drag-and-drop is browser-limited; use Browse for Study Folder if this continues.'
+          : 'No readable JSON files were found in the drop. Try dropping the JSON file directly or use the browse button.';
+        setStatus(message, 'warn');
+        return;
       }
+      await handleFiles(files);
     }
 
     async function handleFiles(fileList) {
@@ -1718,6 +1841,7 @@
       renderCalculationTable();
       renderStudyTable();
       renderPrintStudyList();
+      renderPrintReportMeta();
       const hasData = state.studies.length > 0;
       els.exportExcelBtn.disabled = !hasData;
       els.printParetoBtn.disabled = !hasData;
@@ -2005,6 +2129,28 @@
       els.printStudyNote.textContent = `${visibleStudies.length} stud${visibleStudies.length === 1 ? 'y' : 'ies'} shown • Pareto source: ${getViewLabel()} • ${includedCodes} / ${totalCodes} reason-code tags included in Pareto totals.`;
     }
 
+
+    function renderPrintReportMeta() {
+      if (!els.paretoPrintMeta) return;
+      const visibleStudies = getVisibleStudies();
+      const totals = getTotals();
+      const includedCodes = getCodeSummaryRows().filter(row => isCodeIncluded(row.code)).length;
+      const totalCodes = getCodeSummaryRows().length;
+      const generatedAt = new Date().toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
+      });
+      const filters = [
+        `Source: ${getViewLabel()}`,
+        `Location: ${state.selectedLocation === 'ALL' ? 'All locations' : state.selectedLocation}`,
+        `Shift: ${state.selectedShift === 'ALL' ? 'All shifts' : state.selectedShift}`,
+        `Reason codes included: ${includedCodes} / ${totalCodes}`,
+        `Visible studies: ${visibleStudies.length}`,
+        `Events: ${totals.totalEvents.toLocaleString()}`,
+        `Generated: ${generatedAt}`
+      ];
+      els.paretoPrintMeta.textContent = filters.join(' • ');
+    }
+
     function renderCalculationTable() {
       if (!state.studies.length) {
         els.calculationBody.innerHTML = '<tr><td colspan="14" class="empty-state">No studies loaded.</td></tr>';
@@ -2254,8 +2400,39 @@
       URL.revokeObjectURL(url);
     }
 
+    let paretoPrintRestoreState = null;
+
+    function prepareParetoPrintView() {
+      if (!state.studies.length || paretoPrintRestoreState) return;
+      renderPrintStudyList();
+      renderPrintReportMeta();
+      paretoPrintRestoreState = {
+        title: document.title,
+        tableWasCollapsed: els.paretoTableWrap.classList.contains('table-collapsed'),
+        summaryText: els.paretoTableSummary ? els.paretoTableSummary.textContent : '',
+        buttonText: els.toggleParetoTableBtn ? els.toggleParetoTableBtn.textContent : ''
+      };
+      document.body.classList.add('print-pdf-mode');
+      document.title = `MPG Downtime Pareto - ${new Date().toISOString().slice(0, 10)}`;
+      els.paretoTableWrap.classList.remove('table-collapsed');
+      if (els.paretoTableSummary) els.paretoTableSummary.textContent = 'Included in PDF';
+      if (els.toggleParetoTableBtn) els.toggleParetoTableBtn.textContent = 'Collapse Table';
+    }
+
+    function restoreParetoPrintView() {
+      if (!paretoPrintRestoreState) return;
+      if (paretoPrintRestoreState.tableWasCollapsed) els.paretoTableWrap.classList.add('table-collapsed');
+      else els.paretoTableWrap.classList.remove('table-collapsed');
+      if (els.paretoTableSummary) els.paretoTableSummary.textContent = paretoPrintRestoreState.summaryText;
+      if (els.toggleParetoTableBtn) els.toggleParetoTableBtn.textContent = paretoPrintRestoreState.buttonText;
+      document.title = paretoPrintRestoreState.title;
+      document.body.classList.remove('print-pdf-mode');
+      paretoPrintRestoreState = null;
+    }
+
     function printParetoPdf() {
       if (!state.studies.length) return;
+      prepareParetoPrintView();
       window.print();
     }
 
@@ -2289,16 +2466,69 @@
       if (summaryEl) summaryEl.textContent = collapsed ? 'Collapsed' : 'Expanded';
     }
 
-    els.dropZone.addEventListener('dragover', event => {
+    function isProbablyFileDrop(event) {
+      const dataTransfer = event.dataTransfer;
+      if (!dataTransfer) return false;
+      const types = Array.from(dataTransfer.types || []).map(type => String(type).toLowerCase());
+      return types.includes('files') || (dataTransfer.files && dataTransfer.files.length > 0) || (dataTransfer.items && dataTransfer.items.length > 0);
+    }
+
+    function isInsideLoadArea(event) {
+      const target = event.target;
+      return Boolean(target?.closest?.('#jsonDropZone, #folderDropZone, #loadSection'));
+    }
+
+    function clearDropHighlights() {
+      els.jsonDropZone?.classList.remove('drag-over');
+      els.folderDropZone?.classList.remove('drag-over');
+    }
+
+    function bindDropZone(dropTarget, mode) {
+      if (!dropTarget) return;
+      dropTarget.addEventListener('dragenter', event => {
+        if (!isProbablyFileDrop(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+        clearDropHighlights();
+        dropTarget.classList.add('drag-over');
+      });
+      dropTarget.addEventListener('dragover', event => {
+        if (!isProbablyFileDrop(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+        dropTarget.classList.add('drag-over');
+      });
+      dropTarget.addEventListener('dragleave', event => {
+        const nextTarget = event.relatedTarget;
+        if (nextTarget && dropTarget.contains(nextTarget)) return;
+        dropTarget.classList.remove('drag-over');
+      });
+      dropTarget.addEventListener('drop', event => {
+        if (!isProbablyFileDrop(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        clearDropHighlights();
+        handleDropTransfer(event.dataTransfer, mode);
+      });
+    }
+
+    bindDropZone(els.jsonDropZone, 'ANY');
+    bindDropZone(els.folderDropZone, 'FOLDER');
+
+    document.addEventListener('dragover', event => {
+      if (!isProbablyFileDrop(event) || !isInsideLoadArea(event)) return;
       event.preventDefault();
-      els.dropZone.classList.add('drag-over');
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
     });
-    els.dropZone.addEventListener('dragleave', () => els.dropZone.classList.remove('drag-over'));
-    els.dropZone.addEventListener('drop', event => {
+
+    document.addEventListener('drop', event => {
+      if (!isProbablyFileDrop(event) || !isInsideLoadArea(event)) return;
       event.preventDefault();
-      els.dropZone.classList.remove('drag-over');
-      handleDropTransfer(event.dataTransfer);
     });
+
+    window.addEventListener('blur', clearDropHighlights);
     els.jsonInput.addEventListener('change', event => handleFiles(event.target.files));
     els.jsonInputSecondary.addEventListener('change', event => handleFiles(event.target.files));
     if (els.folderInput) els.folderInput.addEventListener('change', event => handleFiles(event.target.files));
@@ -2306,6 +2536,8 @@
     els.clearBtn.addEventListener('click', clearData);
     els.exportExcelBtn.addEventListener('click', exportExcel);
     els.printParetoBtn.addEventListener('click', printParetoPdf);
+    window.addEventListener('beforeprint', prepareParetoPrintView);
+    window.addEventListener('afterprint', restoreParetoPrintView);
 
     els.paretoBody.addEventListener('click', event => {
       const btn = event.target.closest('[data-code]');
